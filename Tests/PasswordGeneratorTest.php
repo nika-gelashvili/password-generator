@@ -44,7 +44,6 @@ class PasswordGeneratorTest extends TestCase
     /**
      * lengthProvider function returns random integer between 6 and 1000;
      * @return int
-     * @throws Exception
      */
     public function lengthProvider()
     {
