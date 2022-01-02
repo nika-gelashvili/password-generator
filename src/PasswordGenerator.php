@@ -82,9 +82,104 @@ class PasswordGenerator implements PasswordGeneratorInterface
         return $this->strength;
     }
 
+    /**
+     * @return string
+     */
     public function generatePassword()
     {
+        $randomString = '';
 
+        $fillingCharsArr = $this->setFillingCharsArr();
+
+        $conditionCharArr = $this->setConditionCharsArray();
+
+        $conditions = $this->setConditions();
+
+        foreach ($conditions as $k => $v) {
+            if ($v['required']) {
+                for ($i = 0; $i < $v['count']; $i++) {
+                    $randomKey = random_int(0, strlen($conditionCharArr[$k]) - 1);
+                    $randomString .= substr($conditionCharArr[$k], $randomKey, 1);
+                }
+            }
+        }
+        if (strlen($randomString) < $this->length) {
+            $fillingLength = $this->length - strlen($randomString);
+            $fillingCharsArrCount = count($fillingCharsArr);
+            for ($i = 0; $i < $fillingLength; $i++) {
+                // Get random key of array
+                $randomKey = random_int(1, $fillingCharsArrCount);
+                // Get random element key from string in random array element
+                $randomChar = random_int(0, strlen($fillingCharsArr[$i % $randomKey]) - 1);
+                // Retrieve random char from random array element
+                $randomString .= substr($fillingCharsArr[$i % $randomKey], $randomChar, 1);
+            }
+        }
+
+        // Shuffle random string to make it more random as conditions might compromise string.
+        return str_shuffle($randomString);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function setFillingCharsArr()
+    {
+        switch ($this->strength) {
+            case self::STRENGTH_ONE:
+                $chars = [self::LOWERCASE_LETTERS, self::UPPERCASE_LETTERS];
+                break;
+            case self::STRENGTH_TWO:
+                $chars = [self::LOWERCASE_LETTERS, self::UPPERCASE_LETTERS, self::NUMBERS];
+                break;
+            case self::STRENGTH_THREE:
+                $chars = [self::LOWERCASE_LETTERS, self::UPPERCASE_LETTERS, self::NUMBERS, self::SPECIAL_CHARS];
+                break;
+            default:
+                $chars = [self::LOWERCASE_LETTERS, self::UPPERCASE_LETTERS];
+        }
+        return $chars;
+    }
+
+    /**
+     * @return array[]
+     */
+    private function setConditions()
+    {
+        return [
+            'lowercase' => [
+                'required' => ($this->strength === self::STRENGTH_ONE || $this->strength === self::STRENGTH_TWO || $this->strength === self::STRENGTH_THREE),
+                'min_value' => 'a',
+                'max_value' => 'z',
+                'count' => 1
+            ],
+            'uppercase' => [
+                'required' => ($this->strength === self::STRENGTH_ONE || $this->strength === self::STRENGTH_TWO || $this->strength === self::STRENGTH_THREE),
+                'min_value' => 'A',
+                'max_value' => 'Z',
+                'count' => 2
+            ],
+            'numbers' => [
+                'required' => ($this->strength === self::STRENGTH_TWO || $this->strength === self::STRENGTH_THREE),
+                'min_value' => 2,
+                'max_value' => 5,
+                'count' => 1
+            ],
+            'special' => [
+                'required' => $this->strength === self::STRENGTH_THREE,
+                'min_value' => null,
+                'max_value' => null,
+                'count' => 1
+            ]
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function setConditionCharsArray()
+    {
+        return ['lowercase' => self::LOWERCASE_LETTERS, 'uppercase' => self::UPPERCASE_LETTERS, 'numbers' => self::NUMBERS, 'special' => self::SPECIAL_CHARS];
     }
 
     /**
