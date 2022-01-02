@@ -19,6 +19,32 @@ class PasswordGenerator implements PasswordGeneratorInterface
     private $strength;
 
     /**
+     * @param $passwordLength
+     * @param $passwordStrength
+     */
+    public function __construct($passwordLength = self::MIN_LENGTH, $passwordStrength = self::STRENGTH_ONE)
+    {
+        if (!is_int($passwordLength)) {
+            throw new \InvalidArgumentException('Expected Integer');
+        }
+
+        if (!is_int($passwordStrength)) {
+            throw new \InvalidArgumentException('Expected Integer');
+        }
+
+        if (!$this->checkStrengthOption($passwordStrength)) {
+            throw new \InvalidArgumentException('Expected password option');
+        }
+
+        if ($passwordLength < self::MIN_LENGTH) {
+            throw new \InvalidArgumentException('Minimum password length is 6');
+        }
+
+        $this->setLength($passwordLength);
+        $this->setStrength($passwordStrength);
+    }
+
+    /**
      * Set length parameter of class
      * @param $value
      * @return mixed|void
@@ -59,5 +85,18 @@ class PasswordGenerator implements PasswordGeneratorInterface
     public function generatePassword()
     {
 
+    }
+
+    /**
+     * Function to check if password strength is set from strength options
+     * @param $value
+     * @return bool
+     */
+    private function checkStrengthOption($value)
+    {
+        if ($value !== self::STRENGTH_ONE && $value !== self::STRENGTH_TWO && $value !== self::STRENGTH_THREE) {
+            return false;
+        }
+        return true;
     }
 }
