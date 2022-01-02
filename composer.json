@@ -1,0 +1,28 @@
+{
+    "name": "fitpass/generator",
+    "description": "Package for generating passwords",
+    "autoload": {
+        "psr-4": {
+            "Fitpass\\Generator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fitpass\\Generator\\Tests\\": "Tests/"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Nika Gelashvili",
+            "email": "nika.gelash@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.10"
+    }
+}
